@@ -1,15 +1,21 @@
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { FirebaseContext } from '../firebase/ContextApi';
 import { FaGoogle } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  let { LoginEmailandPasssword,SignWithGoogle  } = useContext(FirebaseContext);
+  let { LoginEmailandPasssword,SignWithGoogle,isLogin  } = useContext(FirebaseContext);
   // let { putdata } = useContext(FirebaseContext);        👍both store style is good 
-
+  console.log(isLogin)
+const Navigate=useNavigate()
+  useEffect(()=>{
+    if(isLogin) {return  Navigate('/')}
+    
+  },[isLogin,Navigate])
   const handleSubmit = (e) => {
     e.preventDefault();
  

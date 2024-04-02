@@ -1,6 +1,6 @@
 // FirebaseProvider.js
-import React, { createContext } from 'react';
-import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword,GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import React, { createContext, useEffect, useState } from 'react';
+import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword,GoogleAuthProvider, signInWithPopup,onAuthStateChanged } from "firebase/auth";
 
 import app from './Firebaseconfig';
 
@@ -47,10 +47,21 @@ signInWithPopup(auth, GoogleProvider)
  }
 
 
+const[user,setuser]=useState(null)
+
+useEffect(()=>{
+  const auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    if (user) setuser(user)
+    else setuser(null )
+  })
+},[])
+
+const isLogin= user? true:false 
 
   return (
  //   <FirebaseContext.Provider value={{ putdata: EmailandPassword }}>
-    <FirebaseContext.Provider value={{ EmailandPassword,LoginEmailandPasssword,SignWithGoogle }}>
+    <FirebaseContext.Provider value={{ EmailandPassword,LoginEmailandPasssword,SignWithGoogle,isLogin }}>
    
       {props.children}
     </FirebaseContext.Provider>
