@@ -1,14 +1,20 @@
 // FirebaseProvider.js
 import React, { createContext, useEffect, useState } from 'react';
 import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword,GoogleAuthProvider, signInWithPopup,onAuthStateChanged } from "firebase/auth";
-
+import { getFirestore,collection,addDoc, Firestore } from "firebase/firestore"; // also data store
+import {getStorage,ref, uploadBytes} from 'firebase/storage'  // here data store means we upload our data to firestorage of storage means storage
 import app from './Firebaseconfig';
+
 
 export const FirebaseContext = createContext();  // eska kaam ka storage banana bss 
 
 
 
 const FirebaseProvider = (props) => {
+
+  const db = getFirestore(app);
+const storage=getStorage(app);
+
 
   const GoogleProvider = new GoogleAuthProvider();
   const EmailandPassword = (email, password) => {
@@ -58,10 +64,27 @@ useEffect(()=>{
 },[])
 
 const isLogin= user? true:false 
+console.log(user)
+const HandleCreateNewListing=async(name,isbn,price,cover)=>{
+const imageRef=ref(storage,`uploads/images/${Date.now()}-${cover.name}`)  // with date it show some unique data  uploade imge file
+const uploadResult=await uploadBytes(imageRef,cover)  // now image is uploaded  now i want my  should be inside firestore to mange data for this  import collection in  the firestore and  addDoc also
+
+return await addDoc(collection(db,'books'),{
+  name,
+  isbn,
+  price,
+  imageURL:uploadResult.ref.fullPath,
+  userID:user.uid,
+  userEmail:user.email,
+  displayName:user.displayName,
+  photoURL:user.photoURL
+})
+}
+
 
   return (
  //   <FirebaseContext.Provider value={{ putdata: EmailandPassword }}>
-    <FirebaseContext.Provider value={{ EmailandPassword,LoginEmailandPasssword,SignWithGoogle,isLogin }}>
+    <FirebaseContext.Provider value={{ EmailandPassword,LoginEmailandPasssword,SignWithGoogle,isLogin,HandleCreateNewListing }}>
    
       {props.children}
     </FirebaseContext.Provider>
